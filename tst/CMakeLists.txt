@@ -13,7 +13,9 @@ set(TESTS_NAME "${EXE_NAME}_tests")
 # Add test files
 add_executable(${TESTS_NAME}
     ./RoomTest.cpp
+    ./HeaterTest.cpp
     ${SRC_DIR}/Room.cpp
+    ${SRC_DIR}/Heater.cpp
 )
 
 # Link Google Test to the test executable

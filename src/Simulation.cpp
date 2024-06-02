@@ -11,6 +11,7 @@ void Simulation::process(size_t iterations, float timeStep)
 void Simulation::iteration(float timeStep)
 /*Take a single step in the simulation and update the room.*/
 {
+    room.addHeat(heater.getEmitedHeat(timeStep));
     room.update(timeStep);
-    std::cout << room.getTemperature() << std::endl;
+    std::cout << room.getTemperature() << heater.getCurrentPower() << std::endl;
 }

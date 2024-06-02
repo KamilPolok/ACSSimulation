@@ -2,6 +2,8 @@
 #pragma once
 #include <cstddef>
 #include "Room.hpp"
+#include "Heater.hpp"
+
 class Simulation
 {
 public:
@@ -15,4 +17,5 @@ public:
     Simulation& operator=(Simulation) = delete;
 private:
     Room room;
+    Heater heater;
 };

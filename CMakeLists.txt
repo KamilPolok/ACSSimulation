@@ -13,6 +13,7 @@ set(INC_DIR "${PROJECT_SOURCE_DIR}/inc")
 
 add_executable(${EXE_NAME} main.cpp
     ${SRC_DIR}/Room.cpp
+    ${SRC_DIR}/Heater.cpp
     ${SRC_DIR}/Simulation.cpp
     )
 
