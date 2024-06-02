@@ -3,5 +3,5 @@
 int main()
 {
     Simulation simulation;
-    simulation.process(20, 1);
+    simulation.runSimulation(20, 1);
 }
