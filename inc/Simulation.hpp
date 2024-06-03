@@ -5,7 +5,7 @@
 #include <string>
 #include "Room.hpp"
 #include "Heater.hpp"
-
+#include "ControllerIf.hpp"
 struct DataRecord {
     float time;
     float temperature;
@@ -18,7 +18,8 @@ struct DataRecord {
 class Simulation
 {
 public:
-    Simulation() = default;
+    Simulation();
+    ~Simulation();
     Simulation(const Simulation&) = delete;
     Simulation(Simulation&&) = delete;
 
@@ -30,9 +31,10 @@ private:
 
     Room room;
     Heater heater;
+    ControllerIf* controller;
 
     void iteration(float);
 
-    void displayStatus(size_t);
-    void saveToCSV(const std::string&);
+    void displayStatus(size_t) const;
+    void saveToCSV(const std::string&) const;
 };

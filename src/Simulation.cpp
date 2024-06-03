@@ -5,16 +5,31 @@
 #include <filesystem> // requires c++17
 #include <sstream>
 #include <locale>
+#include "PIDController.hpp"
+#include "BBController.hpp"
+
+Simulation::Simulation()
+    : controller(nullptr)   
+{
+}
+
+Simulation::~Simulation()
+{
+    delete controller;
+}
 
 void Simulation::runSimulation(size_t iterations, float timeStep)
 /*Execute the simulation.*/
 {   
+    controller = new PIDController;
+    controller->setSetpoint(20);
+
     // Run the iterations of simulation
     for(size_t i {}; i < iterations; ++i)
     {
-        iteration(timeStep);
         records.emplace_back(i * timeStep, room.getTemperature(), heater.getCurrentPower());
         displayStatus(i);
+        iteration(timeStep);
     }
 
     // saveResults
@@ -26,9 +41,11 @@ void Simulation::iteration(float timeStep)
 {
     room.addHeat(heater.getEmitedHeat(timeStep));
     room.update(timeStep);
+    float controlValue = controller->control(room.getTemperature(), timeStep);
+    heater.setPowerLevel(controlValue);
 }
 
-void Simulation::displayStatus(size_t iterationNum)
+void Simulation::displayStatus(size_t iterationNum) const
 /*Display the status after given iteration*/
 {
     std::ostringstream timeStream, tempStream, powerStream;
@@ -44,7 +61,7 @@ void Simulation::displayStatus(size_t iterationNum)
                 << std::endl;
 }
 
-void Simulation::saveToCSV(const std::string& filename)
+void Simulation::saveToCSV(const std::string& filename) const
 /*Save data into csv file*/
 {
     // using filesystem library - c++17

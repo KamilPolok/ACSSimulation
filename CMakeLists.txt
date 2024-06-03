@@ -15,6 +15,8 @@ add_executable(${EXE_NAME} main.cpp
     ${SRC_DIR}/Room.cpp
     ${SRC_DIR}/Heater.cpp
     ${SRC_DIR}/Simulation.cpp
+    ${SRC_DIR}/BBController.cpp
+    ${SRC_DIR}/PIDController.cpp
     )
 
 target_include_directories(${EXE_NAME} PRIVATE ${INC_DIR})
