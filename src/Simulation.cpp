@@ -5,8 +5,6 @@
 #include <filesystem> // requires c++17
 #include <sstream>
 #include <locale>
-#include "PIDController.hpp"
-#include "BBController.hpp"
 
 Simulation::Simulation()
     : controller(nullptr)   
@@ -18,12 +16,16 @@ Simulation::~Simulation()
     delete controller;
 }
 
+void Simulation::setController(ControllerType type)
+{
+    delete controller;
+    controller = ControllerFactory::createController(type, &room, &heater);
+    controller->setSetpoint(20);
+}
+
 void Simulation::runSimulation(size_t iterations, float timeStep)
 /*Execute the simulation.*/
 {   
-    controller = new PIDController;
-    controller->setSetpoint(20);
-
     // Run the iterations of simulation
     for(size_t i {}; i < iterations; ++i)
     {
@@ -41,8 +43,8 @@ void Simulation::iteration(float timeStep)
 {
     room.addHeat(heater.getEmitedHeat(timeStep));
     room.update(timeStep);
-    float controlValue = controller->control(room.getTemperature(), timeStep);
-    heater.setPowerLevel(controlValue);
+    if (controller);
+        controller->control(timeStep);
 }
 
 void Simulation::displayStatus(size_t iterationNum) const

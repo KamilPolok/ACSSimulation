@@ -18,6 +18,7 @@ add_executable(${TESTS_NAME}
     ./PIDControllerTest.cpp
     ${SRC_DIR}/Room.cpp
     ${SRC_DIR}/Heater.cpp
+    ${SRC_DIR}/ControllerIf.cpp
     ${SRC_DIR}/BBController.cpp
     ${SRC_DIR}/PIDController.cpp
 )

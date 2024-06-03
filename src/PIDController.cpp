@@ -1,19 +1,23 @@
 #include "PIDController.hpp"
+#include <iostream>
 
-PIDController::PIDController(float specifiedValue)
-    : ControllerIf(specifiedValue), errorIntegral(0), previousError(0)
+PIDController::PIDController(Room* controlObject_, Heater* actuator_)
+    : ControllerIf(controlObject_, actuator_), errorIntegral(0), previousError(0)
 {
 }
 
-float PIDController::control(float processVariable, float dt)
+void PIDController::control(float dt)
 /* 
     Generates control value based on control values of proportional, integral and
     derrivative term:
     e(t) = r(t) - y(t); u(t) = u_p(t) + u_i(t) + u_d(t)
 */
 {
+    float processVariable = controlObject->getTemperature();
     float error = setpoint - processVariable;
-    return porportionalTerm(error) + integralTerm(error, dt) + derrivativeTerm(error, dt); 
+    float controlVariable = porportionalTerm(error) + integralTerm(error, dt) + derrivativeTerm(error, dt);
+    std::cout << controlVariable << std::endl;
+    actuator->setPowerLevel(controlVariable);
 }
 
 float PIDController::porportionalTerm(float error)

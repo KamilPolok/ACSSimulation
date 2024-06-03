@@ -6,6 +6,8 @@
 #include "Room.hpp"
 #include "Heater.hpp"
 #include "ControllerIf.hpp"
+#include "ControllerFactory.hpp"
+ 
 struct DataRecord {
     float time;
     float temperature;
@@ -23,6 +25,7 @@ public:
     Simulation(const Simulation&) = delete;
     Simulation(Simulation&&) = delete;
 
+    void setController(ControllerType type);
     void runSimulation(size_t, float);
 
     Simulation& operator=(Simulation) = delete;

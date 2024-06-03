@@ -4,6 +4,6 @@
 class BBController : public ControllerIf
 {
 public:
-    BBController(float=0);
-    float control(float, float);
+    BBController(Room*, Heater*);
+    void control(float) override;
 };

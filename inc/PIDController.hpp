@@ -4,8 +4,8 @@
 class PIDController : public ControllerIf
 {
 public:
-    PIDController(float=0);
-    float control(float, float) override;
+    PIDController(Room*, Heater*);
+    void control(float) override;
 private:
     static constexpr float kp = 4.0;    // proportional gain
     static constexpr float ki = 0.02;   // intgeral gain

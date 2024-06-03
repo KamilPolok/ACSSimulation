@@ -1,12 +1,13 @@
 #include "BBController.hpp"
 
-BBController::BBController(float specifiedValue)
-    : ControllerIf(specifiedValue)
+BBController::BBController(Room* controlObject_, Heater* actuator_)
+    : ControllerIf(controlObject_, actuator_)
 {  
 }
 
-float BBController::control(float processVariable, float dt)
+void BBController::control(float dt)
 /* control of type bang-bang (on-off) */
 {
-    return (processVariable < setpoint) ? 1 : 0;
+    float processVariable = controlObject->getTemperature();
+    actuator->setPowerLevel((processVariable < setpoint) ? 1 : 0);
 }
