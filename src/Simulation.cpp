@@ -15,13 +15,6 @@ Simulation::~Simulation()
     delete controller;
 }
 
-void Simulation::setController(ControllerType type)
-{
-    delete controller;
-    controller = ControllerFactory::createController(type, &room, &heater);
-    controller->setSetpoint(20);
-}
-
 void Simulation::runSimulation(size_t iterations, float timeStep)
 /*Execute the simulation.*/
 {   
@@ -32,6 +25,14 @@ void Simulation::runSimulation(size_t iterations, float timeStep)
         displayStatus(i);
         iteration(timeStep);
     }
+}
+
+void Simulation::setController(ControllerType type, const PIDConstants* constants)
+{
+    delete controller;
+    controller = ControllerFactory::createController(type, constants);
+    controller->setControlObject(&room);
+    controller->setActuator(&heater);
 }
 
 void Simulation::iteration(float timeStep)
@@ -80,4 +81,25 @@ void Simulation::saveToCSV(const std::string& filepath) const
 
     file.close();
     std::cout << "Data saved to " << filepath << std::endl;
+}
+
+
+ControllerIf* const Simulation::getController()
+{
+    return controller;
+}
+
+Room* const Simulation::getRoom()
+{
+    return &room;
+}
+
+Heater* const Simulation::getHeater()
+{
+    return &heater;
+}
+
+bool Simulation::isControllerSet()
+{
+    return controller;
 }

@@ -1,8 +1,12 @@
 #include "PIDController.hpp"
-#include <iostream>
 
-PIDController::PIDController(Room* controlObject_, Heater* actuator_)
-    : ControllerIf(controlObject_, actuator_), errorIntegral(0), previousError(0)
+PIDController::PIDController()
+    : kp(4.0), ki(0.02), kd(0.1), errorIntegral(0), previousError(0)
+{
+}
+
+PIDController::PIDController(float kp_, float ki_, float kd_)
+    : kp(kp_), ki(ki_), kd(kd_), errorIntegral(0), previousError(0)
 {
 }
 
@@ -16,7 +20,6 @@ void PIDController::control(float dt)
     float processVariable = controlObject->getTemperature();
     float error = setpoint - processVariable;
     float controlVariable = porportionalTerm(error) + integralTerm(error, dt) + derrivativeTerm(error, dt);
-    std::cout << controlVariable << std::endl;
     actuator->setPowerLevel(controlVariable);
 }
 

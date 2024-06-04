@@ -21,7 +21,13 @@ void saveResults(const Simulation& simulation)
 int main()
 {
     Simulation simulation;
-    simulation.setController(ControllerType::BB);
-    simulation.runSimulation(20, 30);
+    simulation.getRoom()->setDimensions(10, 10, 10);
+    simulation.getRoom()->setExternalTemperature(-40);
+    simulation.getRoom()->setInitialInternalTemperature(30);
+    simulation.getRoom()->setWallThickness(0.2);
+    simulation.getHeater()->setNominalPower(4000);
+    simulation.setController(ControllerType::PID);
+    simulation.getController()->setSetpoint(100);
+    simulation.runSimulation(1000, 30);
     saveResults(simulation);
 }

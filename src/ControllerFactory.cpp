@@ -1,12 +1,15 @@
 #include "ControllerFactory.hpp"
 
-ControllerIf* ControllerFactory::createController(ControllerType type, Room* room, Heater* heater)
+ControllerIf* ControllerFactory::createController(ControllerType type, const PIDConstants* constants)
 {
     switch(type) {
         case ControllerType::BB:
-            return new BBController(room, heater);
+            return new BBController;
         case ControllerType::PID:
-            return new PIDController(room, heater);
+            if (constants)
+                return new PIDController(constants->kp, constants->ki, constants->kd);
+            else
+                return new PIDController();
         default:
             throw std::invalid_argument("Unknown controller type");
     }

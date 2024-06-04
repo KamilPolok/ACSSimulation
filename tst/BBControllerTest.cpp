@@ -13,7 +13,9 @@ protected:
     void SetUp() override {
         room = new Room;
         heater = new Heater(100); // nominal power 100 W
-        controller = new BBController(room, heater);
+        controller = new BBController();
+        controller->setControlObject(room);
+        controller->setActuator(heater);
     }
 };
 

@@ -5,7 +5,7 @@
 class ControllerIf
 {
 public:
-    ControllerIf(Room* controlObject_, Heater* actuator_);
+    ControllerIf();
     virtual void control(float dt) = 0;
     void setSetpoint(float);
     void setControlObject(Room* const);

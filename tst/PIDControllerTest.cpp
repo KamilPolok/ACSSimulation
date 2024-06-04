@@ -1,7 +1,6 @@
 #include "PIDController.hpp"
 #include "Room.hpp"
 #include "Heater.hpp"
-
 #include <gtest/gtest.h>
 
 TEST(PIDControllerTest, ControlFunctionIntegration)
@@ -10,7 +9,9 @@ TEST(PIDControllerTest, ControlFunctionIntegration)
     Room room;
     float nominalPower = 100.0;
     Heater heater(nominalPower); // nominal power 100 W
-    PIDController controller(&room, &heater);
+    PIDController controller;
+    controller.setControlObject(&room);
+    controller.setActuator(&heater);
     controller.setSetpoint(20.2);
 
     controller.control(1.0); // setpoint = 19.8, processVariable = 20.0, dt = 1

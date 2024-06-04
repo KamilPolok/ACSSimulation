@@ -24,9 +24,16 @@ public:
     Simulation(const Simulation&) = delete;
     Simulation(Simulation&&) = delete;
 
-    void setController(ControllerType type);
     void runSimulation(size_t, float);
     void saveToCSV(const std::string&) const;
+
+    void setController(ControllerType type, const PIDConstants* = nullptr);
+    
+    ControllerIf* const getController();
+    Room* const getRoom();
+    Heater* const getHeater();
+
+    bool isControllerSet();
 
     Simulation& operator=(Simulation) = delete;
 private:
