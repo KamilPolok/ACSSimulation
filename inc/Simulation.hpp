@@ -7,7 +7,6 @@
 #include "Heater.hpp"
 #include "ControllerIf.hpp"
 #include "ControllerFactory.hpp"
- 
 struct DataRecord {
     float time;
     float temperature;
@@ -27,6 +26,7 @@ public:
 
     void setController(ControllerType type);
     void runSimulation(size_t, float);
+    void saveToCSV(const std::string&) const;
 
     Simulation& operator=(Simulation) = delete;
 private:
@@ -39,5 +39,4 @@ private:
     void iteration(float);
 
     void displayStatus(size_t) const;
-    void saveToCSV(const std::string&) const;
 };

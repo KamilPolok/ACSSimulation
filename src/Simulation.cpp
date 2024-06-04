@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <filesystem> // requires c++17
 #include <sstream>
 #include <locale>
 
@@ -33,9 +32,6 @@ void Simulation::runSimulation(size_t iterations, float timeStep)
         displayStatus(i);
         iteration(timeStep);
     }
-
-    // saveResults
-    saveToCSV("results");
 }
 
 void Simulation::iteration(float timeStep)
@@ -63,22 +59,12 @@ void Simulation::displayStatus(size_t iterationNum) const
                 << std::endl;
 }
 
-void Simulation::saveToCSV(const std::string& filename) const
+void Simulation::saveToCSV(const std::string& filepath) const
 /*Save data into csv file*/
 {
-    // using filesystem library - c++17
-    std::filesystem::path filepath = std::filesystem::current_path() / "build" / (filename + ".csv");
     std::ofstream file(filepath);
-
-    if (!std::filesystem::exists(filepath.parent_path())) {
-        if (!std::filesystem::create_directories(filepath.parent_path())) {
-            std::cerr << "Failed to create directories for path: " << filepath << "\n";
-            return;
-        }
-    }
-
     if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << filename << " for writing." << std::endl;
+        std::cerr << "Failed to open file: " << filepath << " for writing." << std::endl;
         return;
     }
 
