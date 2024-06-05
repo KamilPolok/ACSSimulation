@@ -24,8 +24,11 @@ add_executable(${TESTS_NAME}
 )
 
 # Link Google Test to the test executable
-target_link_libraries(${TESTS_NAME}
-    PRIVATE gtest_main gtest
+target_link_libraries(${TESTS_NAME} PRIVATE
+    gtest_main 
+    gtest
+    gmock_main
+    gmock
 )
 
 # Include application's headers

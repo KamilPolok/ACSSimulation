@@ -6,7 +6,7 @@ public:
     Heater(float=100.0);
 
     void setNominalPower(float);
-    void setPowerLevel(float);
+    virtual void setPowerLevel(float);
 
     float getPowerLevel();
     float getCurrentPower();

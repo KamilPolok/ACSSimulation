@@ -1,44 +1,48 @@
 #include "BBController.hpp"
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "Room.hpp"
-#include "Heater.hpp"
+#include <iostream>
+
+class MockRoom : public Room {
+public:
+    MOCK_METHOD(float, getTemperature, (), (const, override));
+};
+
+class MockHeater : public Heater {
+public:
+    MOCK_METHOD(void, setPowerLevel, (float), (override));
+};
 
 class BBControllerTest : public ::testing::Test
 {
 protected:
-    BBController* controller;
-    Room* room;
-    Heater* heater;
+    BBController controller;
+    MockRoom room;
+    MockHeater heater;
 
     void SetUp() override {
-        room = new Room;
-        heater = new Heater(100); // nominal power 100 W
-        controller = new BBController();
-        controller->setControlObject(room);
-        controller->setActuator(heater);
+        std::cout << &room << std::endl; 
+
+        controller.setControlObject(&room);
+        controller.setActuator(&heater);
+        controller.setSetpoint(20.0);
     }
 };
 
-TEST_F(BBControllerTest, ReturnsOneWhenProcessVariableIsLessThanSetPoint)
+TEST_F(BBControllerTest, ActivatesHeaterWhenBelowSetpoint)
 {
-    controller->setSetpoint(30.0);  // setpoint = 30.0, processVariable = 20.0;
-    controller->control(1);  // processVariable is less than setpoint -> currentPower = 100; 
-    float output = heater->getCurrentPower();
-    EXPECT_EQ(output, 100);
+    EXPECT_CALL(room, getTemperature()).WillOnce(::testing::Return(18.0)); // Room returns temperature < setpoint
+    EXPECT_CALL(heater, setPowerLevel(1));
+
+    controller.control(1);
 }
 
-TEST_F(BBControllerTest, ReturnsZeroWhenProcessVariableIsEqualToSetPoint)
+TEST_F(BBControllerTest, DeactivatesHeaterWhenAtOrAboveSetpoint)
 {
-    controller->setSetpoint(20.0);  // setpoint = 10.0, processVariable = 20.0;
-    controller->control(1);  // processVariable equals setpoint -> currentPower = 0
-    float output = heater->getCurrentPower();
-    EXPECT_EQ(output, 0);
-}
+    for (float temp : {20.0f, 22.0f}) {
+        EXPECT_CALL(room, getTemperature()).WillOnce(::testing::Return(temp)); // Room fisrt returns temperature = setpoint and then > setpoint
+        EXPECT_CALL(heater, setPowerLevel(0));
 
-TEST_F(BBControllerTest, ReturnsZeroWhenProcessVariableIsGreaterThanSetPoint)
-{
-    controller->setSetpoint(10.0);  // setpoint = 10.0, processVariable = 20.0;
-    controller->control(1);  // processVariable is greater than setpoint -> currentPower = 0
-    float output = heater->getCurrentPower();
-    EXPECT_EQ(output, 0);
+        controller.control(1);
+    }
 }

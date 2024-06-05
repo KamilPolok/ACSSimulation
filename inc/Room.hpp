@@ -7,7 +7,7 @@ class Room {
   void update(float timeStep);
   void addHeat(float heat);
 
-  float getTemperature() const;
+  virtual float getTemperature() const;
 
   void setDimensions(float, float, float);
   void setWallThickness(float);
