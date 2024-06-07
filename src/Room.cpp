@@ -2,50 +2,54 @@
 #include <sstream>
 #include <stdexcept>
 
-Room::Room(float h, float w, float d)
- : incomingHeat(0)                  // W
- , wallThickness(0.4)               // m
- , wallThermalConductivity(0.3)     // W / (m*degC)
- , externalTemperature(-20.0)       // degC
- , internalTemperature(20.0)        // degC
+Room::Room(float height_, float width_, float depth_,
+           float initialInternalTemperature_,
+           float externalTemperature_,
+           float wallThickness_,
+           float wallThermalConductivity_)
+  : incomingHeat(0.0f)                
 {
-  setDimensions(h, w, d);
+  setDimensions(height_, width_, depth_);
   totalWallsArrea = 2 * (width + depth) * height;
   airMass = width * depth * height * airDensity;
+
+  setInternalTemperature(initialInternalTemperature_);
+  setExternalTemperature(externalTemperature_);
+  setWallThickness(wallThickness_);
+  setWallThermalConductivity(wallThermalConductivity_);
 }
 
-void Room::update(float dt) 
+void Room::update(float dt_)
+/*
+  Calculates the new temperature in the room based on the incoming heat.
+  Args:
+    dt_ - time step - time difference between previous and current update
+*/
 {
-  /*Calculates the new temperature in the room based on the incoming heat.*/
-  incomingHeat -= heatLoss();
-  internalTemperature += temperatureDifference(incomingHeat, dt);
+  incomingHeat -= calculateHeatLoss();
+  processVariable += calculateTemperatureDifference(incomingHeat, dt_);
   incomingHeat = 0.0;
 }
 
-void Room::addHeat(float q)
+void Room::adjustControlVariable(float q)
+/*Adds a certain amount of heat (in watts) flowing into the room.*/
 {
-  /*Adds a certain amount of heat (in watts) flowing into the room.*/
   incomingHeat += q;
 }
 
-float Room::getTemperature() const
+float Room::calculateHeatLoss() const
+/*Simplified model of heat flow through a wall with given parameters.*/
 {
-  return internalTemperature;
-}
-
-float Room::heatLoss() const
-{
-  /*Simplified model of heat flow through a wall with given parameters.*/
-  float tempGradient = (internalTemperature - externalTemperature) / wallThickness;
+  float tempGradient = (processVariable - externalTemperature) / wallThickness;
   float heat = wallThermalConductivity * totalWallsArrea * tempGradient;
   return heat;
 }
 
-float Room::temperatureDifference(float q, float dt) const
+float Room::calculateTemperatureDifference(float q, float dt) const
+/*Calculates the change in temperature of a medium based on its parameters and the incoming heat.
+  q = m*c*dt  =>  dtemp = q/(m*c)
+*/
 {
-  /*Calculates the change in temperature of a medium based on its parameters and the incoming heat.
-    q = m*c*dt  =>  dtemp = q/(m*c)
-  */
   return q / (airMass * airSpecificHeat) * dt;
 }
 
@@ -89,18 +93,18 @@ void Room::setWallThermalConductivity(float thermalConductivity)
   wallThermalConductivity = thermalConductivity;
 }
 
-void Room::setExternalTemperature(float temperature)
+void Room::setInternalTemperature(float temperature_)
 {
-  if (temperature < -273.15)
-    externalTemperature = -273.15;
+  if (temperature_ < -273.15)
+    setProcessVariable(-273.15f);
   else
-    externalTemperature = temperature;
+    setProcessVariable(temperature_);
 }
 
-void Room::setInitialInternalTemperature(float temperature)
+void Room::setExternalTemperature(float temperature_)
 {
-  if (temperature < -273.15)
-    internalTemperature = -273.15;
+  if (temperature_ < -273.15)
+    externalTemperature = -273.15f;
   else
-    internalTemperature = temperature;
+    externalTemperature = temperature_;
 }

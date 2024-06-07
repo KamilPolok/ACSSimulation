@@ -16,11 +16,13 @@ add_executable(${TESTS_NAME}
     ./HeaterTest.cpp
     ./BBControllerTest.cpp
     ./PIDControllerTest.cpp
+    ${SRC_DIR}/ActuatorIf.cpp
+    ${SRC_DIR}/ControlObjectIf.cpp
     ${SRC_DIR}/Room.cpp
     ${SRC_DIR}/Heater.cpp
     ${SRC_DIR}/ControllerIf.cpp
-    ${SRC_DIR}/BBController.cpp
     ${SRC_DIR}/PIDController.cpp
+    ${SRC_DIR}/BBController.cpp
 )
 
 # Link Google Test to the test executable
@@ -32,7 +34,10 @@ target_link_libraries(${TESTS_NAME} PRIVATE
 )
 
 # Include application's headers
-target_include_directories(${TESTS_NAME} PUBLIC ${INC_DIR})
+target_include_directories(${TESTS_NAME} PUBLIC 
+  ${INC_DIR}
+  .
+  )
 
 # Add the tests to CTest
 include(GoogleTest)

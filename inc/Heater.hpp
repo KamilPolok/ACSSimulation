@@ -1,17 +1,10 @@
 #pragma once
+#include "ActuatorIf.hpp"
 
-class Heater
+class Heater : public ActuatorIf
 {
 public:
-    Heater(float=100.0);
-
-    void setNominalPower(float);
-    virtual void setPowerLevel(float);
-
-    float getPowerLevel();
-    float getCurrentPower();
-    float getEmitedHeat(float);
-private:
-    float  nominalPower;    // W
-    float  powerLevel;      // % (0-1)
+    Heater(float=100.0f); // Power [W]
+    void setNominalControlVariableValue(float) override;
+    float getControlVariableValue() const override;
 };

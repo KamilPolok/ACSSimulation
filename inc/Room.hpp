@@ -1,36 +1,35 @@
 #pragma once
+#include "ControlObjectIf.hpp"
 
-class Room {
- public:
-  Room(float height=10, float width=10, float depth=10);
+class Room : public ControlObjectIf
+{
+public:
+  Room(float, float, float, float, float=-20.0f, float=0.4f, float=0.3f);
   
-  void update(float timeStep);
-  void addHeat(float heat);
+  void update(float) override;
+  void adjustControlVariable(float) override;
 
-  virtual float getTemperature() const;
+private:
+  float height;                                     // [m]
+  float width;                                      // [m]
+  float depth;                                      // [m]
+  float externalTemperature;                        // [degC]
+  float wallThickness;                              // [m]
+  float wallThermalConductivity;                    // [W / (m*degC)]
+  float incomingHeat;                               // [J]
+
+  static constexpr float airSpecificHeat = 721.0f;  // [J/kg * degC]
+  static constexpr float airDensity = 1.225f;       // [kg/m3]
+
+  float totalWallsArrea;     
+  float airMass;
+
+  float calculateHeatLoss() const;
+  float calculateTemperatureDifference(float, float=1.0f) const;
 
   void setDimensions(float, float, float);
   void setWallThickness(float);
-  void setWallThermalConductivity(float= 0.3);
+  void setWallThermalConductivity(float);
+  void setInternalTemperature(float);
   void setExternalTemperature(float);
-  void setInitialInternalTemperature(float);
-
- private:
-  float height;
-  float width;
-  float depth;
-  float totalWallsArrea;
-  float airMass;
-  float internalTemperature;
-  float incomingHeat;
-
-  static constexpr float airSpecificHeat = 721; // J/kg * degC
-  static constexpr float airDensity = 1.225;    // kg/m3
-
-  float wallThickness;
-  float wallThermalConductivity;
-  float externalTemperature;
-
-  float heatLoss() const;
-  float temperatureDifference(float heat, float time=1.0) const;
 };

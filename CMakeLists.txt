@@ -12,13 +12,15 @@ set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
 set(INC_DIR "${PROJECT_SOURCE_DIR}/inc")
 
 add_executable(${EXE_NAME} main.cpp
-    ${SRC_DIR}/Room.cpp
+    ${SRC_DIR}/ActuatorIf.cpp
+    ${SRC_DIR}/ControlObjectIf.cpp
     ${SRC_DIR}/Heater.cpp
-    ${SRC_DIR}/Simulation.cpp
+    ${SRC_DIR}/Room.cpp
     ${SRC_DIR}/ControllerFactory.cpp
     ${SRC_DIR}/ControllerIf.cpp
     ${SRC_DIR}/BBController.cpp
     ${SRC_DIR}/PIDController.cpp
+    ${SRC_DIR}/Simulation.cpp
     )
 
 target_include_directories(${EXE_NAME} PRIVATE ${INC_DIR})

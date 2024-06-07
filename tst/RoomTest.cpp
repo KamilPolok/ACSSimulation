@@ -7,80 +7,81 @@ protected:
     Room *room;
 
     void SetUp() override {
-        float height = 100;
-        float width = 100;
-        float depth = 100;
+        float height{100.0f};
+        float width {100.0f};
+        float depth {100.0f};
+        float initialInternalTemperature {20.0f};
+        float externalTemperature {-20.0f};
+        float wallThickness {0.4f};
+        float wallThermalConductivity {0.3f};
 
-        room = new Room(height, width, depth);
-        room->setWallThickness(0.4);
-        room->setWallThermalConductivity(0.3);
-        room->setExternalTemperature(-20);
-        room->setInitialInternalTemperature(20.0);
+        room = new Room(height, width, depth, initialInternalTemperature, externalTemperature, wallThickness, wallThermalConductivity);
     }
 
     void TearDown() override {
         delete room;
     }
 };
-TEST_F(RoomTest, ThrowsOnSetDimensionsNonPositiveInput)
+TEST(RoomSetDimensionsTest, ThrowsOnSetDimensionsNonPositiveInput)
 {
-    EXPECT_THROW(room->setDimensions(-1, 10, 10), std::invalid_argument);
-    EXPECT_THROW(room->setDimensions(10, -1, 10), std::invalid_argument);
-    EXPECT_THROW(room->setDimensions(10, 10, -1), std::invalid_argument);
-    EXPECT_THROW(room->setDimensions(0, 10, 10), std::invalid_argument);
-    EXPECT_THROW(room->setDimensions(10, 0, 10), std::invalid_argument);
-    EXPECT_THROW(room->setDimensions(10, 10, 0), std::invalid_argument);
+    EXPECT_THROW(Room(-1, 10, 10, 20), std::invalid_argument);
+    EXPECT_THROW(Room(-1, -1, 10, 20), std::invalid_argument);
+    EXPECT_THROW(Room(10, 10, -1, 20), std::invalid_argument);
+    EXPECT_THROW(Room(0, 10, 10, 20), std::invalid_argument);
+    EXPECT_THROW(Room(10, 0, 10, 20), std::invalid_argument);
+    EXPECT_THROW(Room(10, 10, 0, 20), std::invalid_argument);
+    
 }
 
-TEST_F(RoomTest, FunctionsCorrectlyOnSetDimensionsPositiveInput)
+TEST(RoomSetDimensionsTest, FunctionsCorrectlyOnSetDimensionsPositiveInput)
 {
-    EXPECT_NO_THROW(room->setDimensions(10, 10, 10));
+    EXPECT_NO_THROW(Room(10, 10, 10, 20));
 }
 
-TEST_F(RoomTest, ThrowsOnSetWallThicknessNonPositiveInput)
+TEST(RoomSetWallThicknessTest, ThrowsOnSetWallThicknessNonPositiveInput)
 {
-    EXPECT_THROW(room->setWallThickness(-1), std::invalid_argument);
-    EXPECT_THROW(room->setWallThickness(0), std::invalid_argument);
+    EXPECT_THROW(Room(10, 10, 10, 20, -20, -1), std::invalid_argument);
+    EXPECT_THROW(Room(10, 10, 10, 20, -20, 0), std::invalid_argument);
 }
 
-TEST_F(RoomTest, FunctionsCorrectlyOnSetWallThicknessPositiveInput)
+TEST(RoomSetWallThicknessTest, FunctionsCorrectlyOnSetWallThicknessPositiveInput)
 {
-    EXPECT_NO_THROW(room->setWallThickness(0.4));
+    EXPECT_NO_THROW(Room(10, 10, 10, 20, -20, 0.4));
 }
 
-TEST_F(RoomTest, ThrowsOnSetWallThermalConductivityNonPositiveInput)
+TEST(RoomSetWallThermalConductivityTest, ThrowsOnSetWallThermalConductivityNonPositiveInput)
 {
-    EXPECT_THROW(room->setWallThermalConductivity(-1), std::invalid_argument);
-    EXPECT_THROW(room->setWallThermalConductivity(0), std::invalid_argument);
+    EXPECT_THROW(Room(10, 10, 10, 20, -20, 0.4, -1), std::invalid_argument);
+    EXPECT_THROW(Room(10, 10, 10, 20, -20, 0.4, 0), std::invalid_argument);
 }
 
-TEST_F(RoomTest, FunctionsCorrectlyOnSetWallThermalConductivityPositiveInput)
+TEST(RoomSetWallThermalConductivityTest, FunctionsCorrectlyOnSetWallThermalConductivityPositiveInput)
 {
-   EXPECT_NO_THROW(room->setWallThermalConductivity(0.4));
+   EXPECT_NO_THROW(Room(10, 10, 10, 20, -20, 0.4, 0.3));
 }
 
-TEST_F(RoomTest, SetInitialInternalTemperatureFunctionsCorrectly)
+TEST(RoomSetTemperatureTest, SetTemperatureFunctionsCorrectly)
 {
-    room->setInitialInternalTemperature(-300);
-    EXPECT_NEAR(room->getTemperature(), -273.75, 1); // minimal temperature: -273.75
-    room->setInitialInternalTemperature(50);
-    EXPECT_FLOAT_EQ(room->getTemperature(), 50);
+    Room room1(10, 10, 10, -300);
+    EXPECT_NEAR(room1.getProcessVariable(), -273.75, 1); // minimal temperature: -273.75
+    Room room2(10, 10, 10, 50);
+    EXPECT_FLOAT_EQ(room2.getProcessVariable(), 50);
 }
 
 TEST_F(RoomTest, TemperatureUpdateWhenNoAddedHeatIsCorrect)
 {
-    float dt = 1104.03125;
+    float dt = 1104.03125f;
 
     room->update(dt);
-    EXPECT_NEAR(room->getTemperature(), 19, 0.5);
+    EXPECT_NEAR(room->getProcessVariable(), 19, 0.5);
 }
 
 TEST_F(RoomTest, TemperatureUpdateWhenAddedHeatIsCorrect)
 {
-    float q = 2083225.0;  // This should theoretically increase temp by 1°C in one second
+    float q = 2083225.0f;  // This should theoretically increase temp by 1°C in one second
     float dt = 1000.0;
-    room->addHeat(q);  // Simulate adding the exact amount of heat that increases temperature by 1 degree
+    room->adjustControlVariable(q);  // Simulate adding the exact amount of heat that increases temperature by 1 degree
 
     room->update(dt);
-    EXPECT_NEAR(room->getTemperature(), 21.0, 0.01);
+    EXPECT_NEAR(room->getProcessVariable(), 21.0, 0.01);
 }

@@ -2,46 +2,31 @@
 #include <sstream>
 #include <stdexcept>
 
-Heater::Heater(float power)
-    : powerLevel(0)
+Heater::Heater(float nominalPower_)
 {
-    setNominalPower(power);
+    setNominalControlVariableValue(nominalPower_);
 }
 
-void Heater::setNominalPower(float power)
+void Heater::setNominalControlVariableValue(float nominalPower_)
+/*
+    Args:
+        power_: Nominal power of the heater
+*/
 {
-    if (power <= 0 )
+    if (nominalPower_ <= 0.0f )
     {
         std::stringstream info;
-        info << "Power has to be positive" << power;
+        info << "Power has to be positive" << nominalPower_;
         throw std::invalid_argument(info.str());
     }
-    nominalPower = power;
+    nominalControlVariable = nominalPower_;
 }
 
-void Heater::setPowerLevel(float level)
+float Heater::getControlVariableValue() const
+/*
+    Returns:
+        res: Current power = Nominal power * Power level
+*/
 {
-    if (level > 1)
-        powerLevel = 1;
-    else if (level < 0)
-        powerLevel = 0;
-    else
-        powerLevel = level;
-}
-
-float Heater::getPowerLevel()
-{
-    return powerLevel;
-}
-
-float Heater::getCurrentPower()
-/*Pi = P * power_level*/
-{
-    return nominalPower * powerLevel;
-}
-
-float Heater::getEmitedHeat(float dt)
-/* q = Pi * dt*/
-{
-    return getCurrentPower() * dt;
+    return nominalControlVariable * controlLevel;
 }

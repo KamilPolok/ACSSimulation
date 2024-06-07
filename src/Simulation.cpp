@@ -5,8 +5,10 @@
 #include <sstream>
 #include <locale>
 
-Simulation::Simulation()
-    : controller(nullptr)   
+Simulation::Simulation(ControlObjectIf* const controlObject_, ActuatorIf* const actuator_)
+    : controlObject(controlObject_)
+    , actuator(actuator_)
+    , controller(nullptr)
 {
 }
 
@@ -21,7 +23,7 @@ void Simulation::runSimulation(size_t iterations, float timeStep)
     // Run the iterations of simulation
     for(size_t i {}; i < iterations; ++i)
     {
-        records.emplace_back(i * timeStep, room.getTemperature(), heater.getCurrentPower());
+        records.emplace_back(i * timeStep, controlObject->getProcessVariable(), actuator->getControlVariableValue());
         displayStatus(i);
         iteration(timeStep);
     }
@@ -31,15 +33,15 @@ void Simulation::setController(ControllerType type, const PIDConstants* constant
 {
     delete controller;
     controller = ControllerFactory::createController(type, constants);
-    controller->setControlObject(&room);
-    controller->setActuator(&heater);
+    controller->setControlObject(controlObject);
+    controller->setActuator(actuator);
 }
 
 void Simulation::iteration(float timeStep)
-/*Take a single step in the simulation and update the room.*/
+/*Take a single step in the simulation and update the controlObject.*/
 {
-    room.addHeat(heater.getEmitedHeat(timeStep));
-    room.update(timeStep);
+    controlObject->adjustControlVariable(actuator->getControlVariableValue() * timeStep);
+    controlObject->update(timeStep);
     if (controller);
         controller->control(timeStep);
 }
@@ -87,16 +89,6 @@ void Simulation::saveToCSV(const std::string& filepath) const
 ControllerIf* const Simulation::getController()
 {
     return controller;
-}
-
-Room* const Simulation::getRoom()
-{
-    return &room;
-}
-
-Heater* const Simulation::getHeater()
-{
-    return &heater;
 }
 
 bool Simulation::isControllerSet()

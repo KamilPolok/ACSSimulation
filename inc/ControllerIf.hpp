@@ -1,6 +1,6 @@
 #pragma once
-#include "Room.hpp"
-#include "Heater.hpp"
+#include "ControlObjectIf.hpp"
+#include "ActuatorIf.hpp"
 
 class ControllerIf
 {
@@ -8,10 +8,10 @@ public:
     ControllerIf();
     virtual void control(float dt) = 0;
     void setSetpoint(float);
-    void setControlObject(Room* const);
-    void setActuator(Heater* const);
+    void setControlObject(ControlObjectIf* const);
+    void setActuator(ActuatorIf* const);
 protected:
     float setpoint;
-    Room* controlObject;
-    Heater* actuator;
+    ControlObjectIf* controlObject;
+    ActuatorIf* actuator;
 };

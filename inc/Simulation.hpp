@@ -3,8 +3,8 @@
 #include <cstddef>
 #include <vector>
 #include <string>
-#include "Room.hpp"
-#include "Heater.hpp"
+#include "ControlObjectIf.hpp"
+#include "ActuatorIf.hpp"
 #include "ControllerIf.hpp"
 #include "ControllerFactory.hpp"
 struct DataRecord {
@@ -19,7 +19,7 @@ struct DataRecord {
 class Simulation
 {
 public:
-    Simulation();
+    Simulation(ControlObjectIf* const, ActuatorIf* const);
     ~Simulation();
     Simulation(const Simulation&) = delete;
     Simulation(Simulation&&) = delete;
@@ -27,11 +27,9 @@ public:
     void runSimulation(size_t, float);
     void saveToCSV(const std::string&) const;
 
-    void setController(ControllerType type, const PIDConstants* = nullptr);
+    void setController(ControllerType, const PIDConstants* = nullptr);
     
     ControllerIf* const getController();
-    Room* const getRoom();
-    Heater* const getHeater();
 
     bool isControllerSet();
 
@@ -39,8 +37,8 @@ public:
 private:
     std::vector<DataRecord> records;
 
-    Room room;
-    Heater heater;
+    ControlObjectIf* controlObject;
+    ActuatorIf* actuator;
     ControllerIf* controller;
 
     void iteration(float);

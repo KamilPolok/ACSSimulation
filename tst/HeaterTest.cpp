@@ -6,11 +6,12 @@ class HeaterTest : public ::testing::Test
 {
 protected:
     Heater* heater;
+    float nominalPower;
+    float powerLevel;
 
     void SetUp() override {
-        float nominalPower = 50.0;
-
-        heater = new Heater(nominalPower); // Heater with nominal power 50 W
+        nominalPower = 50.0f;
+        heater = new Heater;
     }
 
     void TearDown() override {
@@ -18,47 +19,44 @@ protected:
     }
 };
 
-TEST_F(HeaterTest, setNominalPowerThrowsOnNonPositiveInput)
-{
-    Heater heater;
-    EXPECT_THROW(heater.setNominalPower(0), std::invalid_argument);
-    EXPECT_THROW(heater.setNominalPower(-1), std::invalid_argument);
+TEST_F(HeaterTest, setNominalControlVariableValueThrowsOnNonPositiveInput)
+{   
+    nominalPower = 0.0f;
+    EXPECT_THROW(heater->setNominalControlVariableValue(nominalPower), std::invalid_argument);
+    nominalPower = -1.0f;
+    EXPECT_THROW(heater->setNominalControlVariableValue(nominalPower), std::invalid_argument);
 }
 
-TEST_F(HeaterTest, setNominalPowerFunctionsCorrectlyOnPositiveInput)
+TEST_F(HeaterTest, setNominalControlVariableValueFunctionsCorrectlyOnPositiveInput)
 {
-    Heater heater;
-    EXPECT_NO_THROW(heater.setNominalPower(1));
+    EXPECT_NO_THROW(heater->setNominalControlVariableValue(nominalPower));
 }
 
-TEST_F(HeaterTest, ConstructorInitializesPowerLevelCorrectly)
+TEST_F(HeaterTest, ConstructorInitializesControlLevelCorrectly)
 {
-    EXPECT_FLOAT_EQ(heater->getPowerLevel(), 0.0); // On default power is level is set to 0%
+    EXPECT_FLOAT_EQ(heater->getControlLevel(), 0.0);   // On default level is set to 0%
 }
 
-TEST_F(HeaterTest, SetPowerLevelFunctionsCorrectly)
+TEST_F(HeaterTest, setControlLevelFunctionsCorrectly)
 {
-    heater->setPowerLevel(0.5);
-    EXPECT_FLOAT_EQ(heater->getPowerLevel(), 0.5);  // 50W * 50% power level
+    powerLevel = 0.5f;
+    heater->setControlLevel(powerLevel);
+    EXPECT_FLOAT_EQ(heater->getControlLevel(), 0.5);   // Test for level in range 0-1
 
-    heater->setPowerLevel(1.5);  // Test clamping to 1
-    EXPECT_FLOAT_EQ(heater->getPowerLevel(), 1.0);
+    powerLevel = 1.5f;
+    heater->setControlLevel(powerLevel);  // Test clamping to 1
+    EXPECT_FLOAT_EQ(heater->getControlLevel(), 1.0);
 
-    heater->setPowerLevel(-0.1);  // Test clamping to 0
-    EXPECT_FLOAT_EQ(heater->getPowerLevel(), 0);
+    powerLevel = -0.1f;
+    heater->setControlLevel(powerLevel);  // Test clamping to 0
+    EXPECT_FLOAT_EQ(heater->getControlLevel(), 0.0);
 }
 
-TEST_F(HeaterTest, CalculatesCurrentPowerCorrectly)
+TEST_F(HeaterTest, CalculatesControlVariableValueCorrectly)
 {
-    heater->setPowerLevel(0.75);    // Set power level to 75%
-    float expectedPower = 50 * 0.75;    // 50W * 75%  
-    EXPECT_FLOAT_EQ(heater->getCurrentPower(), expectedPower);
-}
-
-TEST_F(HeaterTest, CalculatesEmittedHeatCorrectly)
-{
-    heater->setPowerLevel(0.75);  // Set power level to 75%
-    float time = 2;  // 2 seconds
-    float expectedHeat = 50 * 0.75 * time;  // 50W * 75% * 2s
-    EXPECT_FLOAT_EQ(heater->getEmitedHeat(time), expectedHeat);
+    powerLevel = 0.75f;
+    heater->setNominalControlVariableValue(nominalPower);
+    heater->setControlLevel(powerLevel); // Set level to 75%
+    float expectedPower = nominalPower * powerLevel;  // 50W * 75%  
+    EXPECT_FLOAT_EQ(heater->getControlVariableValue(), expectedPower);
 }

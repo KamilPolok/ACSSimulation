@@ -20,14 +20,11 @@ void saveResults(const Simulation& simulation)
 
 int main()
 {
-    Simulation simulation;
-    simulation.getRoom()->setDimensions(10, 10, 10);
-    simulation.getRoom()->setExternalTemperature(-40);
-    simulation.getRoom()->setInitialInternalTemperature(30);
-    simulation.getRoom()->setWallThickness(0.2);
-    simulation.getHeater()->setNominalPower(4000);
+    Room room(10, 10, 10, 20, -20, 0.4, 03);
+    Heater heater(100);
+    Simulation simulation(&room, &heater);
     simulation.setController(ControllerType::PID);
     simulation.getController()->setSetpoint(100);
-    simulation.runSimulation(1000, 30);
+    simulation.runSimulation(40, 5);
     saveResults(simulation);
 }

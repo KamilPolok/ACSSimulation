@@ -10,17 +10,21 @@ PIDController::PIDController(float kp_, float ki_, float kd_)
 {
 }
 
-void PIDController::control(float dt)
+void PIDController::control(float dt_)
 /* 
     Generates control value based on control values of proportional, integral and
     derrivative term:
-    e(t) = r(t) - y(t); u(t) = u_p(t) + u_i(t) + u_d(t)
+    e(t) = r(t) - y(t)
+    u(t) = u_p(t) + u_i(t) + u_d(t)
+
+    Args:
+        dt_ - timeStep - time difference between previous and current control moment
 */
 {
-    float processVariable = controlObject->getTemperature();
+    float processVariable = controlObject->getProcessVariable();
     float error = setpoint - processVariable;
-    float controlVariable = porportionalTerm(error) + integralTerm(error, dt) + derrivativeTerm(error, dt);
-    actuator->setPowerLevel(controlVariable);
+    float controlVariable = porportionalTerm(error) + integralTerm(error, dt_) + derrivativeTerm(error, dt_);
+    actuator->setControlLevel(controlVariable);
 }
 
 float PIDController::porportionalTerm(float error)

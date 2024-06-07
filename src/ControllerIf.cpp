@@ -5,17 +5,17 @@ ControllerIf::ControllerIf()
 {    
 }
 
-void ControllerIf::setSetpoint(float specifiedValue)
+void ControllerIf::setSetpoint(float setpoint_)
 {
-    setpoint = specifiedValue;
+    setpoint = setpoint_;
 }
 
-void ControllerIf::setControlObject(Room* const room)
+void ControllerIf::setControlObject(ControlObjectIf* const controlObject_)
 {
-    controlObject = room;
+    controlObject = controlObject_;
 }
 
-void ControllerIf::setActuator(Heater* const heater)
+void ControllerIf::setActuator(ActuatorIf* const actuator_)
 {
-    actuator = heater;
+    actuator = actuator_;
 }
