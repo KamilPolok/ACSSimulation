@@ -5,6 +5,7 @@ class ControlObjectIf
 {
 public:
     ControlObjectIf(const std::string& processVariableName_="Process Variable");
+    virtual ~ControlObjectIf() = default;
 
     virtual void update(float) = 0;
     virtual void adjustControlVariable(float) = 0;

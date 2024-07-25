@@ -6,6 +6,8 @@ class ControllerIf
 {
 public:
     ControllerIf();
+    virtual ~ControllerIf() = default;
+
     virtual void control(float dt) = 0;
     void setSetpoint(float);
     void setControlObject(ControlObjectIf* const);

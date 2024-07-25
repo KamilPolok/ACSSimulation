@@ -5,6 +5,7 @@ class ActuatorIf
 {
 public:
     ActuatorIf(const std::string& controlVariableName_="Control Variable");
+    virtual ~ActuatorIf() = default;
     
     virtual void setNominalControlVariableValue(float) = 0;
     virtual void setControlLevel(float);
