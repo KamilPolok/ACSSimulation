@@ -1,7 +1,7 @@
 #include "ActuatorIf.hpp"
 
-ActuatorIf::ActuatorIf()
- : controlLevel(0.0f)
+ActuatorIf::ActuatorIf(const std::string& controlVariableName_)
+ : controlVariableName(controlVariableName_), controlLevel(0.0f)
  {
  }
 
@@ -18,4 +18,9 @@ void ActuatorIf::setControlLevel(float level)
 float ActuatorIf::getControlLevel() const
 {
     return controlLevel;
-} 
+}
+
+const std::string& ActuatorIf::getControlVariableName() const
+{
+    return controlVariableName;
+}

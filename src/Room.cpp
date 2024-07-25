@@ -7,7 +7,8 @@ Room::Room(float height_, float width_, float depth_,
            float externalTemperature_,
            float wallThickness_,
            float wallThermalConductivity_)
-  : incomingHeat(0.0f)                
+  : ControlObjectIf("Temperature [degC]")
+  , incomingHeat(0.0f)                
 {
   setDimensions(height_, width_, depth_);
   totalWallsArrea = 2 * (width + depth) * height;

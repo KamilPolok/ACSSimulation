@@ -1,9 +1,11 @@
 #include "Simulation.hpp"
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <locale>
 #include <filesystem> // requires c++17
 
-void saveResults(const Simulation& simulation)
+void saveResults(const Records& records)
 {
     std::string filename = "results";
     std::filesystem::path filepath = std::filesystem::current_path() / "build" / (filename + ".csv");
@@ -15,7 +17,31 @@ void saveResults(const Simulation& simulation)
         }
     }
 
-    simulation.saveToCSV(filepath.c_str());
+    std::ofstream file(filepath.c_str());
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filepath.c_str() << " for writing." << std::endl;
+        return;
+    }
+
+    // Using default "C" locale
+    for (size_t i = 0; i < records.getColumnNames().size(); ++i)
+    {
+        file << records.getColumnNames()[i];
+        if (i < records.getColumnNames().size() - 1)
+            file << ",";
+    }
+    
+    file << std::endl;
+
+    for (const auto& record : records.getRecords()) {
+        file << std::fixed << std::setprecision(2)
+             << record.time << ","
+             << record.processVariable << ","
+             << record.controlVariable << "\n";
+    }
+
+    file.close();
+    std::cout << "Data saved to " << filepath << std::endl;
 }
 
 int main()
@@ -26,5 +52,5 @@ int main()
     simulation.setController(ControllerType::PID);
     simulation.getController()->setSetpoint(100);
     simulation.runSimulation(40, 5);
-    saveResults(simulation);
+    saveResults(simulation.getRecords());
 }

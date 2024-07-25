@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 Heater::Heater(float nominalPower_)
+: ActuatorIf("Power [W]")
 {
     setNominalControlVariableValue(nominalPower_);
 }
