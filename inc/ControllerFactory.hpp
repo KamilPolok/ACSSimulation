@@ -2,9 +2,6 @@
 #include "ControllerIf.hpp"
 #include <memory>
 
-#include "Room.hpp"
-#include "Heater.hpp"
-
 enum class ControllerType
 {
     BB,

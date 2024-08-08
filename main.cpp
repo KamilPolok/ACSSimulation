@@ -1,9 +1,12 @@
-#include "Simulation.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <locale>
 #include <filesystem> // requires c++17
+
+#include "Simulation.hpp"
+#include "Room.hpp"
+#include "Heater.hpp"
 
 void saveResults(const Records& records)
 {
