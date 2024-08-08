@@ -1,10 +1,9 @@
 #pragma once
 #include "ControllerIf.hpp"
-#include "BBController.hpp"
-#include "PIDController.hpp"
+#include <memory>
+
 #include "Room.hpp"
 #include "Heater.hpp"
-#include <stdexcept>
 
 enum class ControllerType
 {
@@ -25,5 +24,5 @@ struct PIDConstants
 class ControllerFactory
 {
 public:
-    static ControllerIf* createController(ControllerType, const PIDConstants* constants=nullptr);
+    static std::unique_ptr<ControllerIf> createController(ControllerType, const PIDConstants* constants=nullptr);
 };

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <memory>
 #include "PIDController.hpp"
 #include "MockActuator.hpp"
 #include "MockControlObject.hpp"
@@ -10,26 +11,19 @@ using ::testing::_;
 
 class PIDControllerTest : public ::testing::Test {
 protected:
-    PIDController* controller;
+    std::unique_ptr<PIDController> controller;
     MockActuator actuator;
     MockControlObject controlObject;
 
-    void TearDown() override
-    {
-        delete controller;
-        controller = nullptr;
-    }
-
     // Factory method to create a controller with specific gains
-    PIDController* createController(float kp, float ki, float kd) {
-        PIDController* ctrl = new PIDController(kp, ki, kd);
-        ctrl->setActuator(&actuator);
-        ctrl->setControlObject(&controlObject);
-        return ctrl;
+    std::unique_ptr<PIDController> createController(float kp, float ki, float kd) {
+        auto controller = std::make_unique<PIDController>(kp, ki, kd);
+        controller->setActuator(&actuator);
+        controller->setControlObject(&controlObject);
+        return controller;
     }
 };
 
-// Example Test Cases
 
 TEST_F(PIDControllerTest, ProportionalTerm) {
     controller = createController(2.0f, 0.0f, 0.0f);

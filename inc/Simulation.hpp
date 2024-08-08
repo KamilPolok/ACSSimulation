@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <memory>
 #include "ControllerIf.hpp"
 #include "ControlObjectIf.hpp"
 #include "ActuatorIf.hpp"
@@ -38,12 +39,12 @@ class Simulation
 {
 public:
     Simulation(ControlObjectIf* const, ActuatorIf* const);
-    ~Simulation();
+    ~Simulation() = default;
+
     Simulation(const Simulation&) = delete;
     Simulation(Simulation&&) = delete;
 
     void runSimulation(size_t, float);
-
     void setController(ControllerType, const PIDConstants* = nullptr);
     
     ControllerIf* const getController() ;
@@ -57,7 +58,7 @@ private:
 
     ControlObjectIf* controlObject;
     ActuatorIf* actuator;
-    ControllerIf* controller;
+    std::unique_ptr<ControllerIf> controller;
 
     void iteration(float);
 };

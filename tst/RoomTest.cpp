@@ -1,10 +1,11 @@
 #include "Room.hpp"
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <memory>
 
 class RoomTest : public ::testing::Test {
 protected:
-    Room *room;
+    std::unique_ptr<Room> room;
 
     void SetUp() override {
         float height{100.0f};
@@ -15,13 +16,10 @@ protected:
         float wallThickness {0.4f};
         float wallThermalConductivity {0.3f};
 
-        room = new Room(height, width, depth, initialInternalTemperature, externalTemperature, wallThickness, wallThermalConductivity);
-    }
-
-    void TearDown() override {
-        delete room;
+        room = std::make_unique<Room>(height, width, depth, initialInternalTemperature, externalTemperature, wallThickness, wallThermalConductivity);
     }
 };
+
 TEST(RoomSetDimensionsTest, ThrowsOnSetDimensionsNonPositiveInput)
 {
     EXPECT_THROW(Room(-1, 10, 10, 20), std::invalid_argument);

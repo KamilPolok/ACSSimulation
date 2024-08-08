@@ -36,11 +36,6 @@ Simulation::Simulation(ControlObjectIf* const controlObject_, ActuatorIf* const 
 {
 }
 
-Simulation::~Simulation()
-{
-    delete controller;
-}
-
 void Simulation::runSimulation(size_t iterations, float timeStep)
 /*Execute the simulation.*/
 {   
@@ -63,7 +58,6 @@ void Simulation::iteration(float timeStep)
 
 void Simulation::setController(ControllerType type, const PIDConstants* constants)
 {
-    delete controller;
     controller = ControllerFactory::createController(type, constants);
     controller->setControlObject(controlObject);
     controller->setActuator(actuator);
@@ -71,7 +65,7 @@ void Simulation::setController(ControllerType type, const PIDConstants* constant
 
 ControllerIf* const Simulation::getController()
 {
-    return controller;
+    return controller.get();
 }
 
 const Records& Simulation::getRecords() const
@@ -81,5 +75,5 @@ const Records& Simulation::getRecords() const
 
 bool Simulation::isControllerSet()
 {
-    return controller;
+    return controller != nullptr;
 }

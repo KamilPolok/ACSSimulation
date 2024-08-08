@@ -1,21 +1,18 @@
 #include "Heater.hpp"
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <memory>
 
 class HeaterTest : public ::testing::Test
 {
 protected:
-    Heater* heater;
+    std::unique_ptr<Heater> heater;
     float nominalPower;
     float powerLevel;
 
     void SetUp() override {
         nominalPower = 50.0f;
-        heater = new Heater;
-    }
-
-    void TearDown() override {
-        delete heater;
+        heater = std::make_unique<Heater>();
     }
 };
 
