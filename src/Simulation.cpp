@@ -56,11 +56,11 @@ void Simulation::iteration(float timeStep)
         controller->control(timeStep);
 }
 
-void Simulation::setController(ControllerType type, const PIDConstants* constants)
-{
-    controller = ControllerFactory::createController(type, constants);
-    controller->setControlObject(controlObject);
-    controller->setActuator(actuator);
+void Simulation::setController(std::unique_ptr<ControllerIf> controller)
+{    
+    this->controller = std::move(controller);
+    this->controller->setControlObject(controlObject);
+    this->controller->setActuator(actuator);
 }
 
 ControllerIf* const Simulation::getController()

@@ -5,6 +5,7 @@
 #include <filesystem> // requires c++17
 
 #include "Simulation.hpp"
+#include "ControllerFactory.hpp"
 #include "Room.hpp"
 #include "Heater.hpp"
 
@@ -49,11 +50,17 @@ void saveResults(const Records& records)
 
 int main()
 {
+    // Setup Simulation
     Room room(10, 10, 10, 20, -20, 0.4, 03);
     Heater heater(100);
     Simulation simulation(&room, &heater);
-    simulation.setController(ControllerType::PID);
-    simulation.getController()->setSetpoint(100);
+
+    // Create and setup Controller
+    auto bbController = ControllerFactory::createController(ControllerType::BB);
+    bbController->setSetpoint(100);
+    simulation.setController(std::move(bbController));
+
+    // Run simulation
     simulation.runSimulation(40, 5);
     saveResults(simulation.getRecords());
 }

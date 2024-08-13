@@ -45,7 +45,7 @@ public:
     Simulation(Simulation&&) = delete;
 
     void runSimulation(size_t, float);
-    void setController(ControllerType, const PIDConstants* = nullptr);
+    void setController(std::unique_ptr<ControllerIf> controller);
     
     ControllerIf* const getController() ;
     const Records& getRecords() const;
