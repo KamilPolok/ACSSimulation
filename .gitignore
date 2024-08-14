@@ -1,5 +1,6 @@
 # Build file
 build/
+install/
 
 # vscode files
 .vscode/
